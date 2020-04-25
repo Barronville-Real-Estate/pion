@@ -1,4 +1,8 @@
 {
+  "dependencies": {
+    "@pion/container": "file:packages/container",
+    "@pion/utilities": "file:packages/utilities"
+  },
   "devDependencies": {
     "lerna": "^3.20.2"
   },

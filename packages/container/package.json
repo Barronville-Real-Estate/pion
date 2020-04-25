@@ -1,0 +1,18 @@
+{
+  "author": "Jonathan Barronville <jonathan@re.bville.cc>",
+  "dependencies": {
+    "@pion/utilities": "file:../utilities"
+  },
+  "description": "@pion/container component of the Pion toolkit.",
+  "keywords": [
+    "container",
+    "framework",
+    "pion"
+  ],
+  "main": "./lib/index.js",
+  "name": "@pion/container",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "0.0.0"
+}
