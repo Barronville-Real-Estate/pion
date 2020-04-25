@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./node_modules",
+    "paths": {
+      "@pion/*": [ "../packages/*/src" ]
+    }
+  },
+  "extends": "./tsconfig.build.json",
+  "ts-node": { "pretty": true },
+  "typeAcquisition": { "enable": true }
+}

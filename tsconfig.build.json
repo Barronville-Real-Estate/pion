@@ -1,0 +1,47 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "assumeChangesOnlyAffectDirectDependencies": false,
+    "checkJs": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "importsNotUsedAsValues": "error",
+    "incremental": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "listEmittedFiles": true,
+    "module": "commonjs",
+    "noStrictGenericChecks": false,
+    "plugins": [],
+    "preserveConstEnums": true,
+    "preserveSymlinks": true,
+    "preserveWatchOutput": true,
+    "pretty": true,
+    "removeComments": false,
+    "resolveJsonModule": true,
+    "skipLibCheck": false,
+    "strict": true,
+    "suppressExcessPropertyErrors": false,
+    "suppressImplicitAnyIndexErrors": false,
+    "target": "ES6",
+    "useDefineForClassFields": true
+    // "downlevelIteration": true,
+    // "extendedDiagnostics": true, // NOTE: Use via the CLI.
+    // "generateCpuProfile": "tsc.cpuprofile", // NOTE: Use via the CLI.
+    // "importHelpers": true, // NOTE: If this is enabled, make sure to install the "tslib" package as a dependency.
+    // "listFiles": true,
+    // "maxNodeModuleJsDepth": 0,
+    // "traceResolution": true,
+  },
+  "exclude": [ "node_modules" ]
+}

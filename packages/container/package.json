@@ -4,6 +4,10 @@
     "@pion/utilities": "file:../utilities"
   },
   "description": "@pion/container component of the Pion toolkit.",
+  "devDependencies": {
+    "npx": "^10.2.2",
+    "typescript": "^3.8.3"
+  },
   "keywords": [
     "container",
     "framework",
@@ -14,5 +18,10 @@
   "publishConfig": {
     "access": "public"
   },
+  "scripts": {
+    "transpile": "npx --package typescript tsc --project ./tsconfig.build.json",
+    "transpile:watch": "npm run transpile -- --watch"
+  },
+  "types": "./types/index.d.ts",
   "version": "0.0.0"
 }

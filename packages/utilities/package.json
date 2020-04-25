@@ -1,6 +1,10 @@
 {
   "author": "Jonathan Barronville <jonathan@re.bville.cc>",
   "description": "@pion/utilities component of the Pion toolkit.",
+  "devDependencies": {
+    "npx": "^10.2.2",
+    "typescript": "^3.8.3"
+  },
   "keywords": [
     "framework",
     "pion",
@@ -14,5 +18,10 @@
   "publishConfig": {
     "access": "public"
   },
+  "scripts": {
+    "transpile": "npx --package typescript tsc --project ./tsconfig.build.json",
+    "transpile:watch": "npm run transpile -- --watch"
+  },
+  "types": "./types/index.d.ts",
   "version": "0.0.0"
 }
