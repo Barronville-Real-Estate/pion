@@ -14,5 +14,18 @@
 // * limitations under the License.                                            *
 // *****************************************************************************
 
-export { default as ConstructorParameterNamesParser } from './constructor-parameter-names-parser'
-export { default as IConstructorParameterNamesParser } from './constructor-parameter-names-parser.i'
+type ConstructorSuperType = new (...arguments_: any[]) => any;
+
+type ConstructorType<T extends ConstructorSuperType> = new (...arguments_: ConstructorParameters<T>) => InstanceType<T>;
+
+interface IConstructorParameterNamesParser
+{
+  parse(): string[]
+}
+
+export {
+  IConstructorParameterNamesParser as default,
+
+  ConstructorSuperType as IConstructorParameterNamesParserConstructorSuperType,
+  ConstructorType as IConstructorParameterNamesParserConstructorType
+}

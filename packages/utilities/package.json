@@ -1,7 +1,12 @@
 {
   "author": "Jonathan Barronville <jonathan@re.bville.cc>",
+  "dependencies": {
+    "esprima": "^4.0.1"
+  },
   "description": "@pion/utilities component of the Pion toolkit.",
   "devDependencies": {
+    "@types/esprima": "^4.0.2",
+    "@types/estree": "0.0.44",
     "npx": "^10.2.2",
     "typescript": "^3.8.3"
   },
