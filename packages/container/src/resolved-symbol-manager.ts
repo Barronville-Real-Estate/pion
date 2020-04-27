@@ -14,17 +14,52 @@
 // * limitations under the License.                                            *
 // *****************************************************************************
 
-export { default } from './container'
+import type IResolvedSymbolManager from './resolved-symbol-manager.i'
+import type IResolvedSymbolManagerConstructor from './resolved-symbol-manager-constructor.i'
 
-export { IContainerBindingValueType as BindingValueType } from './container.i'
-export { IContainerClassSuperType as ClassSuperType } from './container.i'
-export { IContainerClassType as ClassType } from './container.i'
-export { IContainerConstructorParameterSymbolsType as ConstructorParameterSymbolsType } from './container.i'
-export { default as Container } from './container'
-export { IContainerExtenderFunctionType as ExtenderFunctionType } from './container.i'
-export { IContainerExtenderValueType as ExtenderValueType } from './container.i'
-export { IContainerFactoryType as FactoryType } from './container.i'
-export { default as IContainer } from './container.i'
-export { IContainerRebindEventHandlerType as RebindEventHandlerType } from './container.i'
-export { IContainerRebindEventValueType as RebindEventValueType } from './container.i'
-export { IContainerResolveParametersType as ResolveParametersType } from './container.i'
+const ResolvedSymbolManager: IResolvedSymbolManagerConstructor =
+  class ResolvedSymbolManager
+    implements IResolvedSymbolManager
+  {
+    private _symbols: Set<symbol>
+
+    public constructor()
+    {
+      this._symbols = new Set()
+
+      Object.defineProperties(this, {
+        _symbols: { enumerable: false }
+      })
+    }
+
+    public add(value: symbol)
+    {
+      this._symbols.add(value)
+    }
+
+    public clear()
+    {
+      this._symbols.clear()
+    }
+
+    public contains(value: symbol)
+    {
+      return this._symbols.has(value)
+    }
+
+    public remove(value: symbol)
+    {
+      this._symbols.delete(value)
+    }
+  }
+
+Object.defineProperties(ResolvedSymbolManager.prototype, {
+  constructor: { enumerable: true },
+
+  add: { enumerable: true },
+  clear: { enumerable: true },
+  contains: { enumerable: true },
+  remove: { enumerable: true }
+})
+
+export default ResolvedSymbolManager

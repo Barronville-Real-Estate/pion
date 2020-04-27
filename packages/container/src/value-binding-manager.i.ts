@@ -14,17 +14,31 @@
 // * limitations under the License.                                            *
 // *****************************************************************************
 
-export { default } from './container'
+type ValueType = (bigint |
+                  boolean |
+                  number |
+                  null |
+                  object |
+                  string |
+                  symbol);
 
-export { IContainerBindingValueType as BindingValueType } from './container.i'
-export { IContainerClassSuperType as ClassSuperType } from './container.i'
-export { IContainerClassType as ClassType } from './container.i'
-export { IContainerConstructorParameterSymbolsType as ConstructorParameterSymbolsType } from './container.i'
-export { default as Container } from './container'
-export { IContainerExtenderFunctionType as ExtenderFunctionType } from './container.i'
-export { IContainerExtenderValueType as ExtenderValueType } from './container.i'
-export { IContainerFactoryType as FactoryType } from './container.i'
-export { default as IContainer } from './container.i'
-export { IContainerRebindEventHandlerType as RebindEventHandlerType } from './container.i'
-export { IContainerRebindEventValueType as RebindEventValueType } from './container.i'
-export { IContainerResolveParametersType as ResolveParametersType } from './container.i'
+interface IValueBindingManager
+{
+  clear(): void
+
+  contains(key: symbol): boolean
+
+  get(key: symbol): (ValueType |
+                     undefined)
+
+  set(key: symbol,
+      value: ValueType): void
+
+  unset(key: symbol): void
+}
+
+export {
+  IValueBindingManager as default,
+
+  ValueType as IValueBindingManagerValueType
+}

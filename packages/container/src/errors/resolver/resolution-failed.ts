@@ -14,17 +14,43 @@
 // * limitations under the License.                                            *
 // *****************************************************************************
 
-export { default } from './container'
+import type IResolver from '../../resolver.i'
 
-export { IContainerBindingValueType as BindingValueType } from './container.i'
-export { IContainerClassSuperType as ClassSuperType } from './container.i'
-export { IContainerClassType as ClassType } from './container.i'
-export { IContainerConstructorParameterSymbolsType as ConstructorParameterSymbolsType } from './container.i'
-export { default as Container } from './container'
-export { IContainerExtenderFunctionType as ExtenderFunctionType } from './container.i'
-export { IContainerExtenderValueType as ExtenderValueType } from './container.i'
-export { IContainerFactoryType as FactoryType } from './container.i'
-export { default as IContainer } from './container.i'
-export { IContainerRebindEventHandlerType as RebindEventHandlerType } from './container.i'
-export { IContainerRebindEventValueType as RebindEventValueType } from './container.i'
-export { IContainerResolveParametersType as ResolveParametersType } from './container.i'
+class ResolutionFailedError
+  extends Error
+  implements Error
+{
+  constructor(message: string,
+              resolver: IResolver)
+  {
+    super(message)
+    const error = new Error(message)
+    const thisPrototype = Object.getPrototypeOf(this)
+    Object.setPrototypeOf(error, thisPrototype)
+    const extraData = {
+      classStack: resolver.getClassStack(),
+      parametersStack: resolver.getParametersStack()
+    }
+    Object.defineProperty(error, 'extra', {
+      configurable: true,
+      value: extraData
+    })
+    return error
+  }
+}
+
+Object.defineProperties(ResolutionFailedError.prototype, {
+  constructor: {
+    enumerable: true,
+    value: Error
+  },
+
+  name: {
+    configurable: true,
+    value: ResolutionFailedError.name
+  }
+})
+
+Object.setPrototypeOf(ResolutionFailedError, Error)
+
+export default ResolutionFailedError

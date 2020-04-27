@@ -14,17 +14,31 @@
 // * limitations under the License.                                            *
 // *****************************************************************************
 
-export { default } from './container'
+import type IRebindEventObserver from './rebind-event-observer.i'
+import type { IRebindEventObserverValueType } from './rebind-event-observer.i'
 
-export { IContainerBindingValueType as BindingValueType } from './container.i'
-export { IContainerClassSuperType as ClassSuperType } from './container.i'
-export { IContainerClassType as ClassType } from './container.i'
-export { IContainerConstructorParameterSymbolsType as ConstructorParameterSymbolsType } from './container.i'
-export { default as Container } from './container'
-export { IContainerExtenderFunctionType as ExtenderFunctionType } from './container.i'
-export { IContainerExtenderValueType as ExtenderValueType } from './container.i'
-export { IContainerFactoryType as FactoryType } from './container.i'
-export { default as IContainer } from './container.i'
-export { IContainerRebindEventHandlerType as RebindEventHandlerType } from './container.i'
-export { IContainerRebindEventValueType as RebindEventValueType } from './container.i'
-export { IContainerResolveParametersType as ResolveParametersType } from './container.i'
+type TriggerEventValueCallbackType = () => IRebindEventObserverValueType;
+
+interface IRebindEventSource
+{
+  addObserver(key: symbol,
+              observer: IRebindEventObserver): void
+
+  clearObservers(): void
+
+  containsObservers(key: symbol): boolean
+
+  removeObserver(key: symbol,
+                 observer: IRebindEventObserver): void
+
+  removeObservers(key: symbol): void
+
+  triggerEvent(key: symbol,
+               valueCallback: TriggerEventValueCallbackType): void
+}
+
+export {
+  IRebindEventSource as default,
+
+  TriggerEventValueCallbackType as IRebindEventSourceTriggerEventValueCallbackType
+}

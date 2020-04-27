@@ -14,17 +14,32 @@
 // * limitations under the License.                                            *
 // *****************************************************************************
 
-export { default } from './container'
+import type IBindingEntry from './binding-entry.i'
 
-export { IContainerBindingValueType as BindingValueType } from './container.i'
-export { IContainerClassSuperType as ClassSuperType } from './container.i'
-export { IContainerClassType as ClassType } from './container.i'
-export { IContainerConstructorParameterSymbolsType as ConstructorParameterSymbolsType } from './container.i'
-export { default as Container } from './container'
-export { IContainerExtenderFunctionType as ExtenderFunctionType } from './container.i'
-export { IContainerExtenderValueType as ExtenderValueType } from './container.i'
-export { IContainerFactoryType as FactoryType } from './container.i'
-export { default as IContainer } from './container.i'
-export { IContainerRebindEventHandlerType as RebindEventHandlerType } from './container.i'
-export { IContainerRebindEventValueType as RebindEventValueType } from './container.i'
-export { IContainerResolveParametersType as ResolveParametersType } from './container.i'
+abstract class BindingEntry
+  implements IBindingEntry
+{
+  private _hasClass: boolean
+
+  public constructor(hasClass: boolean)
+  {
+    this._hasClass = hasClass
+
+    Object.defineProperties(this, {
+      _hasClass: { enumerable: false }
+    })
+  }
+
+  public hasClass()
+  {
+    return this._hasClass
+  }
+}
+
+Object.defineProperties(BindingEntry.prototype, {
+  constructor: { enumerable: true },
+
+  hasClass: { enumerable: true }
+})
+
+export default BindingEntry

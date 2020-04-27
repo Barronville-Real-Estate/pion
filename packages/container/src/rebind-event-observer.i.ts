@@ -14,17 +14,24 @@
 // * limitations under the License.                                            *
 // *****************************************************************************
 
-export { default } from './container'
+type HandlerType = (value: ValueType) => void;
 
-export { IContainerBindingValueType as BindingValueType } from './container.i'
-export { IContainerClassSuperType as ClassSuperType } from './container.i'
-export { IContainerClassType as ClassType } from './container.i'
-export { IContainerConstructorParameterSymbolsType as ConstructorParameterSymbolsType } from './container.i'
-export { default as Container } from './container'
-export { IContainerExtenderFunctionType as ExtenderFunctionType } from './container.i'
-export { IContainerExtenderValueType as ExtenderValueType } from './container.i'
-export { IContainerFactoryType as FactoryType } from './container.i'
-export { default as IContainer } from './container.i'
-export { IContainerRebindEventHandlerType as RebindEventHandlerType } from './container.i'
-export { IContainerRebindEventValueType as RebindEventValueType } from './container.i'
-export { IContainerResolveParametersType as ResolveParametersType } from './container.i'
+type ValueType = (bigint |
+                  boolean |
+                  number |
+                  null |
+                  object |
+                  string |
+                  symbol);
+
+interface IRebindEventObserver
+{
+  update(value: ValueType): void
+}
+
+export {
+  IRebindEventObserver as default,
+
+  HandlerType as IRebindEventObserverHandlerType,
+  ValueType as IRebindEventObserverValueType
+}

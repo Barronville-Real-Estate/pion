@@ -14,17 +14,40 @@
 // * limitations under the License.                                            *
 // *****************************************************************************
 
-export { default } from './container'
+import BindingEntry from './binding-entry'
+import type { IClassBindingEntryClassSuperType as ClassSuperType } from './class-binding-entry.i'
+import type { IClassBindingEntryClassType as ClassType } from './class-binding-entry.i'
+import type IClassBindingEntry from './class-binding-entry.i'
+import type IClassBindingEntryConstructor from './class-binding-entry-constructor.i'
 
-export { IContainerBindingValueType as BindingValueType } from './container.i'
-export { IContainerClassSuperType as ClassSuperType } from './container.i'
-export { IContainerClassType as ClassType } from './container.i'
-export { IContainerConstructorParameterSymbolsType as ConstructorParameterSymbolsType } from './container.i'
-export { default as Container } from './container'
-export { IContainerExtenderFunctionType as ExtenderFunctionType } from './container.i'
-export { IContainerExtenderValueType as ExtenderValueType } from './container.i'
-export { IContainerFactoryType as FactoryType } from './container.i'
-export { default as IContainer } from './container.i'
-export { IContainerRebindEventHandlerType as RebindEventHandlerType } from './container.i'
-export { IContainerRebindEventValueType as RebindEventValueType } from './container.i'
-export { IContainerResolveParametersType as ResolveParametersType } from './container.i'
+const ClassBindingEntry: IClassBindingEntryConstructor =
+  class ClassBindingEntry<ClassTypeT extends ClassSuperType>
+    extends BindingEntry
+    implements IClassBindingEntry<ClassTypeT>
+  {
+    private _class: ClassType<ClassTypeT>
+
+    public constructor(class_: ClassType<ClassTypeT>)
+    {
+      super(true)
+
+      this._class = class_
+
+      Object.defineProperties(this, {
+        _class: { enumerable: false }
+      })
+    }
+
+    public getClass()
+    {
+      return this._class
+    }
+  }
+
+Object.defineProperties(ClassBindingEntry.prototype, {
+  constructor: { enumerable: true },
+
+  getClass: { enumerable: true }
+})
+
+export default ClassBindingEntry

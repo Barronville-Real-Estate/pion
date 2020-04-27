@@ -1,10 +1,12 @@
 {
   "author": "Jonathan Barronville <jonathan@re.bville.cc>",
   "dependencies": {
-    "@pion/utilities": "file:../utilities"
+    "@pion/utilities": "file:../utilities",
+    "lodash": "^4.17.15"
   },
   "description": "@pion/container component of the Pion toolkit.",
   "devDependencies": {
+    "@types/lodash": "^4.14.150",
     "npx": "^10.2.2",
     "typescript": "^3.8.3"
   },

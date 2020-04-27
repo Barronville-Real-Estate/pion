@@ -14,17 +14,39 @@
 // * limitations under the License.                                            *
 // *****************************************************************************
 
-export { default } from './container'
+import BindingEntry from './binding-entry'
+import type { IFactoryBindingEntryFactoryType as FactoryType } from './factory-binding-entry.i'
+import type IFactoryBindingEntry from './factory-binding-entry.i'
+import type IFactoryBindingEntryConstructor from './factory-binding-entry-constructor.i'
 
-export { IContainerBindingValueType as BindingValueType } from './container.i'
-export { IContainerClassSuperType as ClassSuperType } from './container.i'
-export { IContainerClassType as ClassType } from './container.i'
-export { IContainerConstructorParameterSymbolsType as ConstructorParameterSymbolsType } from './container.i'
-export { default as Container } from './container'
-export { IContainerExtenderFunctionType as ExtenderFunctionType } from './container.i'
-export { IContainerExtenderValueType as ExtenderValueType } from './container.i'
-export { IContainerFactoryType as FactoryType } from './container.i'
-export { default as IContainer } from './container.i'
-export { IContainerRebindEventHandlerType as RebindEventHandlerType } from './container.i'
-export { IContainerRebindEventValueType as RebindEventValueType } from './container.i'
-export { IContainerResolveParametersType as ResolveParametersType } from './container.i'
+const FactoryBindingEntry: IFactoryBindingEntryConstructor =
+  class FactoryBindingEntry<FactoryTypeT>
+    extends BindingEntry
+    implements IFactoryBindingEntry<FactoryTypeT>
+  {
+    private _factory: FactoryType<FactoryTypeT>
+
+    public constructor(factory: FactoryType<FactoryTypeT>)
+    {
+      super(false)
+
+      this._factory = factory
+
+      Object.defineProperties(this, {
+        _factory: { enumerable: false }
+      })
+    }
+
+    public getFactory()
+    {
+      return this._factory
+    }
+  }
+
+Object.defineProperties(FactoryBindingEntry.prototype, {
+  constructor: { enumerable: true },
+
+  getFactory: { enumerable: true }
+})
+
+export default FactoryBindingEntry

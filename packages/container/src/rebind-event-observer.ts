@@ -14,17 +14,36 @@
 // * limitations under the License.                                            *
 // *****************************************************************************
 
-export { default } from './container'
+import type { IRebindEventObserverHandlerType as HandlerType } from './rebind-event-observer.i'
+import type IRebindEventObserver from './rebind-event-observer.i'
+import type IRebindEventObserverConstructor from './rebind-event-observer-constructor.i'
+import type { IRebindEventObserverValueType as ValueType } from './rebind-event-observer.i'
 
-export { IContainerBindingValueType as BindingValueType } from './container.i'
-export { IContainerClassSuperType as ClassSuperType } from './container.i'
-export { IContainerClassType as ClassType } from './container.i'
-export { IContainerConstructorParameterSymbolsType as ConstructorParameterSymbolsType } from './container.i'
-export { default as Container } from './container'
-export { IContainerExtenderFunctionType as ExtenderFunctionType } from './container.i'
-export { IContainerExtenderValueType as ExtenderValueType } from './container.i'
-export { IContainerFactoryType as FactoryType } from './container.i'
-export { default as IContainer } from './container.i'
-export { IContainerRebindEventHandlerType as RebindEventHandlerType } from './container.i'
-export { IContainerRebindEventValueType as RebindEventValueType } from './container.i'
-export { IContainerResolveParametersType as ResolveParametersType } from './container.i'
+const RebindEventObserver: IRebindEventObserverConstructor =
+  class RebindEventObserver
+    implements IRebindEventObserver
+  {
+    _handler: HandlerType
+
+    public constructor(handler: HandlerType)
+    {
+      this._handler = handler
+
+      Object.defineProperties(this, {
+        _handler: { enumerable: false }
+      })
+    }
+
+    public update(value: ValueType)
+    {
+      this._handler(value)
+    }
+  }
+
+Object.defineProperties(RebindEventObserver.prototype, {
+  constructor: { enumerable: true },
+
+  update: { enumerable: true }
+})
+
+export default RebindEventObserver
