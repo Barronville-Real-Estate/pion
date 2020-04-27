@@ -304,5 +304,6 @@ dist
 
 
 # ---[ Custom ]---
-#
+packages/*/lib
+packages/*/types
 # ---[ / Custom ]---
