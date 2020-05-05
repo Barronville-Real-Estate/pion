@@ -38,6 +38,7 @@ import Resolver from './resolver'
 import SimpleBindingManager from './simple-binding-manager'
 import ValueBindingManager from './value-binding-manager'
 
+/** @hidden */
 let _getStaticContainerGetInstance: () => IContainer
 
 class Container
