@@ -1,4 +1,4 @@
-[@pion/utilities](../README.md) › ["constructor-parameter-names-parser.i"](../modules/_constructor_parameter_names_parser_i_.md) › [IConstructorParameterNamesParser](_constructor_parameter_names_parser_i_.iconstructorparameternamesparser.md)
+[@pion-toolkit/utilities](../README.md) › ["constructor-parameter-names-parser.i"](../modules/_constructor_parameter_names_parser_i_.md) › [IConstructorParameterNamesParser](_constructor_parameter_names_parser_i_.iconstructorparameternamesparser.md)
 
 # Interface: IConstructorParameterNamesParser
 

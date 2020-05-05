@@ -1,20 +1,20 @@
-# Package: `@pion/container`
+# Package: `@pion-toolkit/container`
 
 > An easy-to-use __IoC__ (*inversion of control*) container.
 
 ## Installation
 
-To install __`@pion/container`__, run:
+To install __`@pion-toolkit/container`__, run:
 
 ```sh
-npm i --save '@pion/container'
+npm i --save '@pion-toolkit/container'
 ```
 
 ## Usage
 
 ```typescript
 import assert from 'assert'
-import Container from '@pion/container'
+import Container from '@pion-toolkit/container'
 
 const container = new Container()
 
@@ -48,7 +48,7 @@ Check out the [*API documentation*](docs/classes/_container_.container.md).
 
 ## Author
 
-__Jonathan Barronville__ <[jonathan@re.bville.cc](mailto:jonathan@re.bville.cc)>
+__Jonathan Barronville__
 
 ## License
 

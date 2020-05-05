@@ -1,20 +1,20 @@
-# Package: `@pion/utilities`
+# Package: `@pion-toolkit/utilities`
 
 ## Installation
 
-To install __`@pion/utilities`__, run:
+To install __`@pion-toolkit/utilities`__, run:
 
 ```sh
-npm i --save '@pion/utilities'
+npm i --save '@pion-toolkit/utilities'
 ```
 
 ### API
 
-Check out the [*API documentation*](docs/modules/_index_.md).
+Check out the [*API documentation*](docs/README.md).
 
 ## Author
 
-__Jonathan Barronville__ <[jonathan@re.bville.cc](mailto:jonathan@re.bville.cc)>
+__Jonathan Barronville__
 
 ## License
 

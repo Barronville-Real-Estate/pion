@@ -1,10 +1,10 @@
 {
   "author": "Jonathan Barronville <jonathan@re.bville.cc>",
   "dependencies": {
-    "@pion/utilities": "file:../utilities",
+    "@pion-toolkit/utilities": "file:../utilities",
     "lodash": "^4.17.15"
   },
-  "description": "@pion/container component of the Pion toolkit.",
+  "description": "@pion-toolkit/container component of the Pion toolkit.",
   "devDependencies": {
     "@types/lodash": "^4.14.150",
     "npx": "^10.2.2",
@@ -18,7 +18,7 @@
     "pion"
   ],
   "main": "./lib/index.js",
-  "name": "@pion/container",
+  "name": "@pion-toolkit/container",
   "publishConfig": {
     "access": "public"
   },
@@ -30,5 +30,5 @@
     "transpile:watch": "npm run transpile -- --watch"
   },
   "types": "./types/index.d.ts",
-  "version": "0.1.0"
+  "version": "0.2.0"
 }

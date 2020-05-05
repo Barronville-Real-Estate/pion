@@ -1,4 +1,4 @@
-[@pion/utilities](../README.md) › ["constructor-parameter-names-parser"](../modules/_constructor_parameter_names_parser_.md) › [ConstructorParameterNamesParser](_constructor_parameter_names_parser_.constructorparameternamesparser.md)
+[@pion-toolkit/utilities](../README.md) › ["constructor-parameter-names-parser"](../modules/_constructor_parameter_names_parser_.md) › [ConstructorParameterNamesParser](_constructor_parameter_names_parser_.constructorparameternamesparser.md)
 
 # Class: ConstructorParameterNamesParser <**ConstructorTypeT**>
 

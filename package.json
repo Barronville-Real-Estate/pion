@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "@pion/container": "file:packages/container",
-    "@pion/utilities": "file:packages/utilities"
+    "@pion-toolkit/container": "file:packages/container",
+    "@pion-toolkit/utilities": "file:packages/utilities"
   },
   "devDependencies": {
     "@types/jest": "^25.2.1",
@@ -20,8 +20,8 @@
   "private": true,
   "scripts": {
     "git-pre-commit-hook": "npx npm-run-all git-pre-commit-hook:step-1 git-pre-commit-hook:step-2",
-    "git-pre-commit-hook:step-1": "npx lerna run --scope \"@pion/*\" generate-documentation",
-    "git-pre-commit-hook:step-2": "npx lerna run --scope \"@pion/*\" git-stage-documentation",
+    "git-pre-commit-hook:step-1": "npx lerna run --scope \"@pion-toolkit/*\" generate-documentation",
+    "git-pre-commit-hook:step-2": "npx lerna run --scope \"@pion-toolkit/*\" git-stage-documentation",
     "npm-update-version:major": "npx lerna version --no-git-tag-version --no-push --yes major",
     "npm-update-version:minor": "npx lerna version --no-git-tag-version --no-push --yes minor",
     "npm-update-version:patch": "npx lerna version --no-git-tag-version --no-push --yes patch",

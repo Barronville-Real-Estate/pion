@@ -18,7 +18,7 @@ import type { IClassMappingManagerClassType as ClassType } from './class-mapping
 import type { IClassMappingManagerConstructorParameterSymbolsType as ConstructorParameterSymbolsType } from './class-mapping-manager.i'
 import type IClassMappingManager from './class-mapping-manager.i'
 import type IClassMappingManagerConstructor from './class-mapping-manager-constructor.i'
-import type { IConstructorParameterNamesParser } from '@pion/utilities'
+import type { IConstructorParameterNamesParser } from '@pion-toolkit/utilities'
 
 type IClassMappingManagerPrivateType = (IClassMappingManager &
                                         {
