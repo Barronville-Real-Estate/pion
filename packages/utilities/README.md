@@ -10,7 +10,7 @@ npm i --save '@pion-toolkit/utilities'
 
 ### API
 
-Check out the [*API documentation*](docs/modules/_index_.md).
+Check out the [*API documentation*](docs/README.md).
 
 ## Author
 
