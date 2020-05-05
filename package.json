@@ -17,6 +17,9 @@
   "name": "root",
   "private": true,
   "scripts": {
+    "npm-update-version:major": "npx lerna version --no-git-tag-version --no-push --yes major",
+    "npm-update-version:minor": "npx lerna version --no-git-tag-version --no-push --yes minor",
+    "npm-update-version:patch": "npx lerna version --no-git-tag-version --no-push --yes patch",
     "test": "npx jest",
     "test:watch": "npm run test -- --watch"
   }
