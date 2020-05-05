@@ -14,7 +14,7 @@ Check out the [*API documentation*](docs/modules/_index_.md).
 
 ## Author
 
-__Jonathan Barronville__ <[jonathan@re.bville.cc](mailto:jonathan@re.bville.cc)>
+__Jonathan Barronville__
 
 ## License
 

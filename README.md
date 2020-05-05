@@ -9,7 +9,7 @@
 
 ## Author
 
-__Jonathan Barronville__ <[jonathan@re.bville.cc](mailto:jonathan@re.bville.cc)>
+__Jonathan Barronville__
 
 ## License
 
