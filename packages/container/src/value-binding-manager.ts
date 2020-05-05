@@ -18,47 +18,46 @@ import type IValueBindingManager from './value-binding-manager.i'
 import type IValueBindingManagerConstructor from './value-binding-manager-constructor.i'
 import type { IValueBindingManagerValueType as ValueType } from './value-binding-manager.i'
 
-const ValueBindingManager: IValueBindingManagerConstructor =
-  class ValueBindingManager
-    implements IValueBindingManager
+class ValueBindingManager
+  implements IValueBindingManager
+{
+  private _bindings: Map<symbol, ValueType>
+
+  public constructor()
   {
-    private _bindings: Map<symbol, ValueType>
+    this._bindings = new Map()
 
-    public constructor()
-    {
-      this._bindings = new Map()
-
-      Object.defineProperties(this, {
-        _bindings: { enumerable: false }
-      })
-    }
-
-    public clear()
-    {
-      this._bindings.clear()
-    }
-
-    public contains(key: symbol)
-    {
-      return this._bindings.has(key)
-    }
-
-    public get(key: symbol)
-    {
-      return this._bindings.get(key)
-    }
-
-    public set(key: symbol,
-               value: ValueType)
-    {
-      this._bindings.set(key, value)
-    }
-
-    public unset(key: symbol)
-    {
-      this._bindings.delete(key)
-    }
+    Object.defineProperties(this, {
+      _bindings: { enumerable: false }
+    })
   }
+
+  public clear()
+  {
+    this._bindings.clear()
+  }
+
+  public contains(key: symbol)
+  {
+    return this._bindings.has(key)
+  }
+
+  public get(key: symbol)
+  {
+    return this._bindings.get(key)
+  }
+
+  public set(key: symbol,
+             value: ValueType)
+  {
+    this._bindings.set(key, value)
+  }
+
+  public unset(key: symbol)
+  {
+    this._bindings.delete(key)
+  }
+}
 
 Object.defineProperties(ValueBindingManager.prototype, {
   constructor: { enumerable: true },
@@ -70,4 +69,4 @@ Object.defineProperties(ValueBindingManager.prototype, {
   unset: { enumerable: true }
 })
 
-export default ValueBindingManager
+export default (ValueBindingManager as IValueBindingManagerConstructor)

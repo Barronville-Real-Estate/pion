@@ -20,29 +20,28 @@ import type { IClassBindingEntryClassType as ClassType } from './class-binding-e
 import type IClassBindingEntry from './class-binding-entry.i'
 import type IClassBindingEntryConstructor from './class-binding-entry-constructor.i'
 
-const ClassBindingEntry: IClassBindingEntryConstructor =
-  class ClassBindingEntry<ClassTypeT extends ClassSuperType>
-    extends BindingEntry
-    implements IClassBindingEntry<ClassTypeT>
+class ClassBindingEntry<ClassTypeT extends ClassSuperType>
+  extends BindingEntry
+  implements IClassBindingEntry<ClassTypeT>
+{
+  private _class: ClassType<ClassTypeT>
+
+  public constructor(class_: ClassType<ClassTypeT>)
   {
-    private _class: ClassType<ClassTypeT>
+    super(true)
 
-    public constructor(class_: ClassType<ClassTypeT>)
-    {
-      super(true)
+    this._class = class_
 
-      this._class = class_
-
-      Object.defineProperties(this, {
-        _class: { enumerable: false }
-      })
-    }
-
-    public getClass()
-    {
-      return this._class
-    }
+    Object.defineProperties(this, {
+      _class: { enumerable: false }
+    })
   }
+
+  public getClass()
+  {
+    return this._class
+  }
+}
 
 Object.defineProperties(ClassBindingEntry.prototype, {
   constructor: { enumerable: true },
@@ -50,4 +49,4 @@ Object.defineProperties(ClassBindingEntry.prototype, {
   getClass: { enumerable: true }
 })
 
-export default ClassBindingEntry
+export default (ClassBindingEntry as IClassBindingEntryConstructor)

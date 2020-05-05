@@ -18,95 +18,94 @@ import type IBindingEntry from './binding-entry.i'
 import type IContextualBindingManager from './contextual-binding-manager.i'
 import type IContextualBindingManagerConstructor from './contextual-binding-manager-constructor.i'
 
-const ContextualBindingManager: IContextualBindingManagerConstructor =
-  class ContextualBindingManager
-    implements IContextualBindingManager
+class ContextualBindingManager
+  implements IContextualBindingManager
+{
+  private _bindings: Map<symbol, Map<symbol, IBindingEntry>>
+
+  public constructor()
   {
-    private _bindings: Map<symbol, Map<symbol, IBindingEntry>>
+    this._bindings = new Map()
 
-    public constructor()
-    {
-      this._bindings = new Map()
+    Object.defineProperties(this, {
+      _bindings: { enumerable: false }
+    })
+  }
 
-      Object.defineProperties(this, {
-        _bindings: { enumerable: false }
-      })
+  private _get(key: symbol)
+  {
+    const value = this._bindings.get(key)
+    return (typeof value !== 'undefined') ?
+      value :
+      null
+  }
+
+  private _set(key: symbol,
+               value: Map<symbol, IBindingEntry>)
+  {
+    this._bindings.set(key, value)
+  }
+
+  private _unset(key: symbol)
+  {
+    this._bindings.delete(key)
+  }
+
+  public clear()
+  {
+    this._bindings.clear()
+  }
+
+  public contains(key: symbol)
+  {
+    return this._bindings.has(key)
+  }
+
+  public containsDependent(key: symbol,
+                           dependentKey: symbol)
+  {
+    const value = this._get(key)
+    return (value !== null) ?
+      value.has(dependentKey) :
+      false
+  }
+
+  public getDependent(key: symbol,
+                      dependentKey: symbol)
+  {
+    const value = this._get(key)
+    if (value === null) {
+      return null
     }
+    const entry = value.get(dependentKey)
+    return (typeof entry !== 'undefined') ?
+      entry :
+      null
+  }
 
-    private _get(key: symbol)
-    {
-      const value = this._bindings.get(key)
-      return (typeof value !== 'undefined') ?
-        value :
-        null
+  public setDependent(key: symbol,
+                      dependentKey: symbol,
+                      entry: IBindingEntry)
+  {
+    let value = this._get(key)
+    if (value === null) {
+      value = new Map()
+      this._set(key, value)
     }
+    value.set(dependentKey, entry)
+  }
 
-    private _set(key: symbol,
-                 value: Map<symbol, IBindingEntry>)
-    {
-      this._bindings.set(key, value)
-    }
-
-    private _unset(key: symbol)
-    {
-      this._bindings.delete(key)
-    }
-
-    public clear()
-    {
-      this._bindings.clear()
-    }
-
-    public contains(key: symbol)
-    {
-      return this._bindings.has(key)
-    }
-
-    public containsDependent(key: symbol,
-                             dependentKey: symbol)
-    {
-      const value = this._get(key)
-      return (value !== null) ?
-        value.has(dependentKey) :
-        false
-    }
-
-    public getDependent(key: symbol,
+  public unsetDependent(key: symbol,
                         dependentKey: symbol)
-    {
-      const value = this._get(key)
-      if (value === null) {
-        return null
-      }
-      const entry = value.get(dependentKey)
-      return (typeof entry !== 'undefined') ?
-        entry :
-        null
-    }
-
-    public setDependent(key: symbol,
-                        dependentKey: symbol,
-                        entry: IBindingEntry)
-    {
-      let value = this._get(key)
-      if (value === null) {
-        value = new Map()
-        this._set(key, value)
-      }
-      value.set(dependentKey, entry)
-    }
-
-    public unsetDependent(key: symbol,
-                          dependentKey: symbol)
-    {
-      const value = this._get(key)
-      if (value === null) return
-      value.delete(dependentKey)
-      if (value.size === 0) {
-        this._unset(key)
-      }
+  {
+    const value = this._get(key)
+    if (value === null) return
+    value.delete(dependentKey)
+    if (value.size === 0) {
+      this._unset(key)
     }
   }
+}
 
 Object.defineProperties(ContextualBindingManager.prototype, {
   constructor: { enumerable: true },
@@ -119,4 +118,4 @@ Object.defineProperties(ContextualBindingManager.prototype, {
   unsetDependent: { enumerable: true }
 })
 
-export default ContextualBindingManager
+export default (ContextualBindingManager as IContextualBindingManagerConstructor)

@@ -17,41 +17,40 @@
 import type IResolvedSymbolManager from './resolved-symbol-manager.i'
 import type IResolvedSymbolManagerConstructor from './resolved-symbol-manager-constructor.i'
 
-const ResolvedSymbolManager: IResolvedSymbolManagerConstructor =
-  class ResolvedSymbolManager
-    implements IResolvedSymbolManager
+class ResolvedSymbolManager
+  implements IResolvedSymbolManager
+{
+  private _symbols: Set<symbol>
+
+  public constructor()
   {
-    private _symbols: Set<symbol>
+    this._symbols = new Set()
 
-    public constructor()
-    {
-      this._symbols = new Set()
-
-      Object.defineProperties(this, {
-        _symbols: { enumerable: false }
-      })
-    }
-
-    public add(value: symbol)
-    {
-      this._symbols.add(value)
-    }
-
-    public clear()
-    {
-      this._symbols.clear()
-    }
-
-    public contains(value: symbol)
-    {
-      return this._symbols.has(value)
-    }
-
-    public remove(value: symbol)
-    {
-      this._symbols.delete(value)
-    }
+    Object.defineProperties(this, {
+      _symbols: { enumerable: false }
+    })
   }
+
+  public add(value: symbol)
+  {
+    this._symbols.add(value)
+  }
+
+  public clear()
+  {
+    this._symbols.clear()
+  }
+
+  public contains(value: symbol)
+  {
+    return this._symbols.has(value)
+  }
+
+  public remove(value: symbol)
+  {
+    this._symbols.delete(value)
+  }
+}
 
 Object.defineProperties(ResolvedSymbolManager.prototype, {
   constructor: { enumerable: true },
@@ -62,4 +61,4 @@ Object.defineProperties(ResolvedSymbolManager.prototype, {
   remove: { enumerable: true }
 })
 
-export default ResolvedSymbolManager
+export default (ResolvedSymbolManager as IResolvedSymbolManagerConstructor)

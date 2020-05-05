@@ -20,91 +20,90 @@ import type IRebindEventSource from './rebind-event-source.i'
 import type IRebindEventSourceConstructor from './rebind-event-source-constructor.i'
 import type { IRebindEventSourceTriggerEventValueCallbackType as TriggerEventValueCallbackType } from './rebind-event-source.i'
 
-const RebindEventSource: IRebindEventSourceConstructor =
-  class RebindEventSource
-    implements IRebindEventSource
+class RebindEventSource
+  implements IRebindEventSource
+{
+  private _observers: Map<symbol, IRebindEventObserver[]>
+
+  public constructor()
   {
-    private _observers: Map<symbol, IRebindEventObserver[]>
+    this._observers = new Map()
 
-    public constructor()
-    {
-      this._observers = new Map()
+    Object.defineProperties(this, {
+      _observers: { enumerable: false }
+    })
+  }
 
-      Object.defineProperties(this, {
-        _observers: { enumerable: false }
-      })
+  private _getObservers(key: symbol)
+  {
+    const observers = this._observers.get(key)
+    return (typeof observers !== 'undefined') ?
+      observers :
+      null
+  }
+
+  private _notifyObservers(key: symbol,
+                           value: IRebindEventObserverValueType)
+  {
+    const observers = this._getObservers(key)
+    if (observers === null) return
+    observers.forEach((observer) => {
+      observer.update(value)
+    })
+  }
+
+  private _set(key: symbol,
+               observers: IRebindEventObserver[])
+  {
+    this._observers.set(key, observers)
+  }
+
+  public addObserver(key: symbol,
+                     observer: IRebindEventObserver)
+  {
+    let observers = this._getObservers(key)
+    if (observers === null) {
+      observers = []
+      this._set(key, observers)
     }
+    observers.push(observer)
+  }
 
-    private _getObservers(key: symbol)
-    {
-      const observers = this._observers.get(key)
-      return (typeof observers !== 'undefined') ?
-        observers :
-        null
-    }
+  public clearObservers()
+  {
+    this._observers.clear()
+  }
 
-    private _notifyObservers(key: symbol,
-                             value: IRebindEventObserverValueType)
-    {
-      const observers = this._getObservers(key)
-      if (observers === null) return
-      observers.forEach((observer) => {
-        observer.update(value)
-      })
-    }
+  public containsObservers(key: symbol)
+  {
+    return this._observers.has(key)
+  }
 
-    private _set(key: symbol,
-                 observers: IRebindEventObserver[])
-    {
-      this._observers.set(key, observers)
-    }
-
-    public addObserver(key: symbol,
-                       observer: IRebindEventObserver)
-    {
-      let observers = this._getObservers(key)
-      if (observers === null) {
-        observers = []
-        this._set(key, observers)
-      }
-      observers.push(observer)
-    }
-
-    public clearObservers()
-    {
-      this._observers.clear()
-    }
-
-    public containsObservers(key: symbol)
-    {
-      return this._observers.has(key)
-    }
-
-    public removeObserver(key: symbol,
-                          observer: IRebindEventObserver)
-    {
-      let observers = this._getObservers(key)
-      if (observers === null) return
-      observers = observers.filter((observer1) => (! Object.is(observer1, observer)))
-      if (observers.length !== 0) {
-        this._set(key, observers)
-      } else {
-        this.removeObservers(key)
-      }
-    }
-
-    public removeObservers(key: symbol)
-    {
-      this._observers.delete(key)
-    }
-
-    public triggerEvent(key: symbol,
-                        valueCallback: TriggerEventValueCallbackType)
-    {
-      const value = valueCallback()
-      this._notifyObservers(key, value)
+  public removeObserver(key: symbol,
+                        observer: IRebindEventObserver)
+  {
+    let observers = this._getObservers(key)
+    if (observers === null) return
+    observers = observers.filter((observer1) => (! Object.is(observer1, observer)))
+    if (observers.length !== 0) {
+      this._set(key, observers)
+    } else {
+      this.removeObservers(key)
     }
   }
+
+  public removeObservers(key: symbol)
+  {
+    this._observers.delete(key)
+  }
+
+  public triggerEvent(key: symbol,
+                      valueCallback: TriggerEventValueCallbackType)
+  {
+    const value = valueCallback()
+    this._notifyObservers(key, value)
+  }
+}
 
 Object.defineProperties(RebindEventSource.prototype, {
   constructor: { enumerable: true },
@@ -117,4 +116,4 @@ Object.defineProperties(RebindEventSource.prototype, {
   triggerEvent: { enumerable: true }
 })
 
-export default RebindEventSource
+export default (RebindEventSource as IRebindEventSourceConstructor)

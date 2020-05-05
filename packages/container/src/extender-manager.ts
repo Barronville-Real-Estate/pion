@@ -18,88 +18,87 @@ import type { IExtenderManagerExtenderFunctionType as ExtenderFunctionType } fro
 import type IExtenderManager from './extender-manager.i'
 import type IExtenderManagerConstructor from './extender-manager-constructor.i'
 
-const ExtenderManager: IExtenderManagerConstructor =
-  class ExtenderManager
-    implements IExtenderManager
+class ExtenderManager
+  implements IExtenderManager
+{
+  private _functions: Map<symbol, ExtenderFunctionType[]>
+
+  public constructor()
   {
-    private _functions: Map<symbol, ExtenderFunctionType[]>
+    this._functions = new Map()
 
-    public constructor()
-    {
-      this._functions = new Map()
+    Object.defineProperties(this, {
+      _functions: { enumerable: false }
+    })
+  }
 
-      Object.defineProperties(this, {
-        _functions: { enumerable: false }
-      })
+  private _getAll(key: symbol)
+  {
+    const functions = this._functions.get(key)
+    return (typeof functions !== 'undefined') ?
+      functions :
+      null
+  }
+
+  private _set(key: symbol,
+               functions: ExtenderFunctionType[])
+  {
+    this._functions.set(key, functions)
+  }
+
+  public add(key: symbol,
+             function_: ExtenderFunctionType)
+  {
+    let functions = this._getAll(key)
+    if (functions === null) {
+      functions = []
+      this._set(key, functions)
     }
+    functions.push(function_)
+  }
 
-    private _getAll(key: symbol)
-    {
-      const functions = this._functions.get(key)
-      return (typeof functions !== 'undefined') ?
-        functions :
-        null
-    }
+  public clear()
+  {
+    this._functions.clear()
+  }
 
-    private _set(key: symbol,
-                 functions: ExtenderFunctionType[])
-    {
-      this._functions.set(key, functions)
-    }
+  public contains(key: symbol)
+  {
+    return this._functions.has(key)
+  }
 
-    public add(key: symbol,
-               function_: ExtenderFunctionType)
-    {
-      let functions = this._getAll(key)
-      if (functions === null) {
-        functions = []
-        this._set(key, functions)
-      }
-      functions.push(function_)
-    }
-
-    public clear()
-    {
-      this._functions.clear()
-    }
-
-    public contains(key: symbol)
-    {
-      return this._functions.has(key)
-    }
-
-    public getFunctions(key: symbol)
-    {
-      const functions = this._getAll(key)
-      return (functions !== null) ?
-        {
-          [ Symbol.iterator ]: function* () {
-            for (const function_ of functions) {
-              yield function_
-            }
+  public getFunctions(key: symbol)
+  {
+    const functions = this._getAll(key)
+    return (functions !== null) ?
+      {
+        [ Symbol.iterator ]: function* () {
+          for (const function_ of functions) {
+            yield function_
           }
-        } :
-        null
-    }
+        }
+      } :
+      null
+  }
 
-    public remove(key: symbol,
-                  function_: ExtenderFunctionType)
-    {
-      let functions = this._getAll(key)
-      if (functions === null) return
-      functions = functions.filter((function1) => (! Object.is(function1, function_)))
-      if (functions.length !== 0) {
-        this._set(key, functions)
-      } else {
-        this.removeAll(key)
-      }
-    }
-
-    public removeAll(key: symbol)
-    {
-      this._functions.delete(key)
+  public remove(key: symbol,
+                function_: ExtenderFunctionType)
+  {
+    let functions = this._getAll(key)
+    if (functions === null) return
+    functions = functions.filter((function1) => (! Object.is(function1, function_)))
+    if (functions.length !== 0) {
+      this._set(key, functions)
+    } else {
+      this.removeAll(key)
     }
   }
+
+  public removeAll(key: symbol)
+  {
+    this._functions.delete(key)
+  }
+}
 
 Object.defineProperties(ExtenderManager.prototype, {
   constructor: { enumerable: true },
@@ -112,4 +111,4 @@ Object.defineProperties(ExtenderManager.prototype, {
   removeAll: { enumerable: true }
 })
 
-export default ExtenderManager
+export default (ExtenderManager as IExtenderManagerConstructor)

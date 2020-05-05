@@ -39,238 +39,237 @@ const objectHasOwnProperty = (object: object,
                                          number |
                                          symbol)) => Object.prototype.hasOwnProperty.call(object, property)
 
-const Resolver: IResolverConstructor =
-  class Resolver
-    implements IResolver
+class Resolver
+  implements IResolver
+{
+  private _classMappings: IClassMappingManager
+  private _classStack: ClassType<any>[]
+  private _contextualBindings: IContextualBindingManager
+  private _extenders: IExtenderManager
+  private _parametersStack: ParametersType[]
+  private _resolvedSymbols: IResolvedSymbolManager
+  private _simpleBindings: ISimpleBindingManager
+  private _valueBindings: IValueBindingManager
+
+  private get _classStackSize()
   {
-    private _classMappings: IClassMappingManager
-    private _classStack: ClassType<any>[]
-    private _contextualBindings: IContextualBindingManager
-    private _extenders: IExtenderManager
-    private _parametersStack: ParametersType[]
-    private _resolvedSymbols: IResolvedSymbolManager
-    private _simpleBindings: ISimpleBindingManager
-    private _valueBindings: IValueBindingManager
+    return this._classStack.length
+  }
 
-    private get _classStackSize()
-    {
-      return this._classStack.length
-    }
+  private get _classStackTop()
+  {
+    const { _classStackTopIndex: topIndex } = this
+    return (topIndex !== null) ?
+      this._classStack[topIndex] :
+      null
+  }
 
-    private get _classStackTop()
-    {
-      const { _classStackTopIndex: topIndex } = this
-      return (topIndex !== null) ?
-        this._classStack[topIndex] :
-        null
-    }
+  private get _classStackTopIndex()
+  {
+    const { _classStackSize: stackSize } = this
+    return (stackSize !== 0) ?
+      (stackSize - 1) :
+      null
+  }
 
-    private get _classStackTopIndex()
-    {
-      const { _classStackSize: stackSize } = this
-      return (stackSize !== 0) ?
-        (stackSize - 1) :
-        null
-    }
+  private get _currentClass()
+  {
+    return this._classStackTop
+  }
 
-    private get _currentClass()
-    {
-      return this._classStackTop
-    }
+  private get _currentParameters()
+  {
+    return this._parametersStackTop
+  }
 
-    private get _currentParameters()
-    {
-      return this._parametersStackTop
-    }
+  private get _parametersStackSize()
+  {
+    return this._parametersStack.length
+  }
 
-    private get _parametersStackSize()
-    {
-      return this._parametersStack.length
-    }
+  private get _parametersStackTop()
+  {
+    const { _parametersStackTopIndex: topIndex } = this
+    return (topIndex !== null) ?
+      this._parametersStack[topIndex] :
+      null
+  }
 
-    private get _parametersStackTop()
-    {
-      const { _parametersStackTopIndex: topIndex } = this
-      return (topIndex !== null) ?
-        this._parametersStack[topIndex] :
-        null
-    }
+  private get _parametersStackTopIndex()
+  {
+    const { _parametersStackSize: stackSize } = this
+    return (stackSize !== 0) ?
+      (stackSize - 1) :
+      null
+  }
 
-    private get _parametersStackTopIndex()
-    {
-      const { _parametersStackSize: stackSize } = this
-      return (stackSize !== 0) ?
-        (stackSize - 1) :
-        null
-    }
+  public constructor(classMappings: IClassMappingManager,
+                     contextualBindings: IContextualBindingManager,
+                     extenders: IExtenderManager,
+                     resolvedSymbols: IResolvedSymbolManager,
+                     simpleBindings: ISimpleBindingManager,
+                     valueBindings: IValueBindingManager)
+  {
+    this._classMappings = classMappings
+    this._classStack = []
+    this._contextualBindings = contextualBindings
+    this._extenders = extenders
+    this._parametersStack = []
+    this._resolvedSymbols = resolvedSymbols
+    this._simpleBindings = simpleBindings
+    this._valueBindings = valueBindings
 
-    public constructor(classMappings: IClassMappingManager,
-                       contextualBindings: IContextualBindingManager,
-                       extenders: IExtenderManager,
-                       resolvedSymbols: IResolvedSymbolManager,
-                       simpleBindings: ISimpleBindingManager,
-                       valueBindings: IValueBindingManager)
-    {
-      this._classMappings = classMappings
-      this._classStack = []
-      this._contextualBindings = contextualBindings
-      this._extenders = extenders
-      this._parametersStack = []
-      this._resolvedSymbols = resolvedSymbols
-      this._simpleBindings = simpleBindings
-      this._valueBindings = valueBindings
+    Object.defineProperties(this, {
+      _classMappings: { enumerable: false },
+      _classStack: { enumerable: false },
+      _contextualBindings: { enumerable: false },
+      _extenders: { enumerable: false },
+      _parametersStack: { enumerable: false },
+      _resolvedSymbols: { enumerable: false },
+      _simpleBindings: { enumerable: false },
+      _valueBindings: { enumerable: false }
+    })
+  }
 
-      Object.defineProperties(this, {
-        _classMappings: { enumerable: false },
-        _classStack: { enumerable: false },
-        _contextualBindings: { enumerable: false },
-        _extenders: { enumerable: false },
-        _parametersStack: { enumerable: false },
-        _resolvedSymbols: { enumerable: false },
-        _simpleBindings: { enumerable: false },
-        _valueBindings: { enumerable: false }
-      })
-    }
-
-    private _build(entry: IBindingEntry)
-    {
-      if (entry.hasClass()) {
-        const class_ = (entry as IClassBindingEntry<any>).getClass()
-        return this._buildClass(class_)
-      } else {
-        const factory = (entry as IFactoryBindingEntry<BindingValueType>).getFactory()
-        return this._buildFactory(factory)
-      }
-    }
-
-    private _buildClass(class_: ClassType<any>)
-    {
-      const classMapping = this._classMappings.get(class_)!
-      const { parameterNames: constructorParameterNames } = classMapping
-      if (constructorParameterNames.length === 0) {
-        return new class_() as object
-      }
-      const parameters = this._currentParameters!
-      const { parameterSymbols: constructorParameterMappings } = classMapping
-      const constructorParameters = constructorParameterNames.map((parameterName) => {
-        if (objectHasOwnProperty(parameters, parameterName)) {
-          return parameters[parameterName]
-        } else if (objectHasOwnProperty(constructorParameterMappings, parameterName)) {
-          const parameterKey = constructorParameterMappings[parameterName]
-          this._pushOntoClassStack(class_)
-          let value: BindingValueType
-          try {
-            value = this.resolve(parameterKey, {})
-          } catch (error) {
-            if (error instanceof ResolutionFailedError) {
-              this._popOffClassStack()
-            }
-            throw error
-          }
-          this._popOffClassStack()
-          return value
-        } else {
-          throw new ResolutionFailedError(`Could not resolve a value for parameter {${parameterName}} of constructor {${class_.name}}.`, this)
-        }
-      })
-      return new class_(...constructorParameters) as object
-    }
-
-    private _buildFactory(factory: FactoryType<BindingValueType>)
-    {
-      const parameters = this._currentParameters!
-      return factory(parameters)
-    }
-
-    private _popOffClassStack()
-    {
-      const class_ = this._classStack.pop()
-      return (typeof class_ !== 'undefined') ?
-        class_ :
-        null
-    }
-
-    private _popOffParametersStack()
-    {
-      const parameters = this._parametersStack.pop()
-      return (typeof parameters !== 'undefined') ?
-        parameters :
-        null
-    }
-
-    private _pushOntoClassStack<ClassTypeT extends ClassSuperType>(class_: ClassType<ClassTypeT>)
-    {
-      this._classStack.push(class_)
-    }
-
-    private _pushOntoParametersStack(parameters: ParametersType)
-    {
-      this._parametersStack.push(parameters)
-    }
-
-    public getClassStack()
-    {
-      return [ ...this._classStack ]
-    }
-
-    public getParametersStack()
-    {
-      return [ ...this._parametersStack ]
-    }
-
-    public resolve<ResolveValueTypeT>(key: symbol,
-                                      parameters: ParametersType)
-    {
-      const { _currentClass: currentClass } = this
-      let contextualBindingEntry: (IBindingEntry |
-                                   null)
-      if (currentClass !== null) {
-        const currentClassSymbol = this._classMappings.getSymbol(currentClass)!
-        contextualBindingEntry = this._contextualBindings.getDependent(currentClassSymbol, key)
-      } else {
-        contextualBindingEntry = null
-      }
-      const contextualBindingEntryFound = (contextualBindingEntry !== null)
-      const contextualBuildNeeded = ((! _$isEmpty(parameters)) ||
-                                     contextualBindingEntryFound)
-      if (this._valueBindings.contains(key) &&
-          (! contextualBuildNeeded)) {
-        return this._valueBindings.get(key) as ResolveValueType<ResolveValueTypeT>
-      }
-      const bindingEntry = contextualBindingEntryFound ?
-        contextualBindingEntry! :
-        this._simpleBindings.get(key)
-      if (bindingEntry === null) {
-        const keyString = key.toString()
-        throw new ResolutionFailedError(`Could not find a binding for symbol {${keyString}}.`, this)
-      }
-      this._pushOntoParametersStack(parameters)
-      let value: BindingValueType
-      try {
-        value = this._build(bindingEntry) as BindingValueType
-      } catch (error) {
-        if (error instanceof ResolutionFailedError) {
-          this._popOffParametersStack()
-        }
-        throw error
-      }
-      this._popOffParametersStack()
-      if (this._extenders.contains(key)) {
-        const extenders = this._extenders.getFunctions(key)!
-        for (const extender of extenders) {
-          value = extender(value)
-        }
-      }
-      const shouldResolveOnce = ((! contextualBindingEntryFound) &&
-                                 this._simpleBindings.shouldResolveOnce(key)!)
-      if (shouldResolveOnce &&
-          (! contextualBuildNeeded)) {
-        this._valueBindings.set(key, value)
-      }
-      this._resolvedSymbols.add(key)
-      return value as ResolveValueType<ResolveValueTypeT>
+  private _build(entry: IBindingEntry)
+  {
+    if (entry.hasClass()) {
+      const class_ = (entry as IClassBindingEntry<any>).getClass()
+      return this._buildClass(class_)
+    } else {
+      const factory = (entry as IFactoryBindingEntry<BindingValueType>).getFactory()
+      return this._buildFactory(factory)
     }
   }
+
+  private _buildClass(class_: ClassType<any>)
+  {
+    const classMapping = this._classMappings.get(class_)!
+    const { parameterNames: constructorParameterNames } = classMapping
+    if (constructorParameterNames.length === 0) {
+      return new class_() as object
+    }
+    const parameters = this._currentParameters!
+    const { parameterSymbols: constructorParameterMappings } = classMapping
+    const constructorParameters = constructorParameterNames.map((parameterName) => {
+      if (objectHasOwnProperty(parameters, parameterName)) {
+        return parameters[parameterName]
+      } else if (objectHasOwnProperty(constructorParameterMappings, parameterName)) {
+        const parameterKey = constructorParameterMappings[parameterName]
+        this._pushOntoClassStack(class_)
+        let value: BindingValueType
+        try {
+          value = this.resolve(parameterKey, {})
+        } catch (error) {
+          if (error instanceof ResolutionFailedError) {
+            this._popOffClassStack()
+          }
+          throw error
+        }
+        this._popOffClassStack()
+        return value
+      } else {
+        throw new ResolutionFailedError(`Could not resolve a value for parameter {${parameterName}} of constructor {${class_.name}}.`, this)
+      }
+    })
+    return new class_(...constructorParameters) as object
+  }
+
+  private _buildFactory(factory: FactoryType<BindingValueType>)
+  {
+    const parameters = this._currentParameters!
+    return factory(parameters)
+  }
+
+  private _popOffClassStack()
+  {
+    const class_ = this._classStack.pop()
+    return (typeof class_ !== 'undefined') ?
+      class_ :
+      null
+  }
+
+  private _popOffParametersStack()
+  {
+    const parameters = this._parametersStack.pop()
+    return (typeof parameters !== 'undefined') ?
+      parameters :
+      null
+  }
+
+  private _pushOntoClassStack<ClassTypeT extends ClassSuperType>(class_: ClassType<ClassTypeT>)
+  {
+    this._classStack.push(class_)
+  }
+
+  private _pushOntoParametersStack(parameters: ParametersType)
+  {
+    this._parametersStack.push(parameters)
+  }
+
+  public getClassStack()
+  {
+    return [ ...this._classStack ]
+  }
+
+  public getParametersStack()
+  {
+    return [ ...this._parametersStack ]
+  }
+
+  public resolve<ResolveValueTypeT>(key: symbol,
+                                    parameters: ParametersType)
+  {
+    const { _currentClass: currentClass } = this
+    let contextualBindingEntry: (IBindingEntry |
+                                 null)
+    if (currentClass !== null) {
+      const currentClassSymbol = this._classMappings.getSymbol(currentClass)!
+      contextualBindingEntry = this._contextualBindings.getDependent(currentClassSymbol, key)
+    } else {
+      contextualBindingEntry = null
+    }
+    const contextualBindingEntryFound = (contextualBindingEntry !== null)
+    const contextualBuildNeeded = ((! _$isEmpty(parameters)) ||
+                                    contextualBindingEntryFound)
+    if (this._valueBindings.contains(key) &&
+        (! contextualBuildNeeded)) {
+      return this._valueBindings.get(key) as ResolveValueType<ResolveValueTypeT>
+    }
+    const bindingEntry = contextualBindingEntryFound ?
+      contextualBindingEntry! :
+      this._simpleBindings.get(key)
+    if (bindingEntry === null) {
+      const keyString = key.toString()
+      throw new ResolutionFailedError(`Could not find a binding for symbol {${keyString}}.`, this)
+    }
+    this._pushOntoParametersStack(parameters)
+    let value: BindingValueType
+    try {
+      value = this._build(bindingEntry) as BindingValueType
+    } catch (error) {
+      if (error instanceof ResolutionFailedError) {
+        this._popOffParametersStack()
+      }
+      throw error
+    }
+    this._popOffParametersStack()
+    if (this._extenders.contains(key)) {
+      const extenders = this._extenders.getFunctions(key)!
+      for (const extender of extenders) {
+        value = extender(value)
+      }
+    }
+    const shouldResolveOnce = ((! contextualBindingEntryFound) &&
+                               this._simpleBindings.shouldResolveOnce(key)!)
+    if (shouldResolveOnce &&
+        (! contextualBuildNeeded)) {
+      this._valueBindings.set(key, value)
+    }
+    this._resolvedSymbols.add(key)
+    return value as ResolveValueType<ResolveValueTypeT>
+  }
+}
 
 Object.defineProperties(Resolver.prototype, {
   constructor: { enumerable: true },
@@ -280,4 +279,4 @@ Object.defineProperties(Resolver.prototype, {
   resolve: { enumerable: true }
 })
 
-export default Resolver
+export default (Resolver as IResolverConstructor)
