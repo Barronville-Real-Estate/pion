@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      // "tslib": [ "../../node_modules/tslib" ],
+      "*": [ "node_modules/*" ]
+    }
+  },
+  "extends": "../../tsconfig.json"
+}

@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "declarationDir": "./types",
+    "outDir": "./lib",
+    "rootDir": "./src"
+  },
+  "exclude": [ "src/**/*.test.ts" ],
+  "extends": "../../tsconfig.build.json",
+  "include": [ "src/**/*.ts" ],
+  "typedocOptions": {
+    "exclude": [ "**/*.test.ts" ],
+    "excludeExternals": true,
+    "excludePrivate": true,
+    "hideGenerator": true,
+    "hideSources": true,
+    "ignoreCompilerErrors": true,
+    "inputFiles": [
+      "./src/index.ts",
+      "./src/container.i.ts",
+      "./src/container.ts"
+    ],
+    "listInvalidSymbolLinks": true,
+    "mode": "modules",
+    "namedAnchors": true,
+    "out": "docs",
+    "plugin": [ "typedoc-plugin-markdown" ],
+    "readme": "none",
+    "theme": "markdown"
+    // "excludeNotExported": true,
+    // "hideIndexes": true,
+    // "includeDeclarations": true,
+    // "includeVersion": true,
+    // "theme": "minimal",
+  }
+}
