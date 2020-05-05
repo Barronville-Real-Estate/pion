@@ -19,26 +19,25 @@ import type IRebindEventObserver from './rebind-event-observer.i'
 import type IRebindEventObserverConstructor from './rebind-event-observer-constructor.i'
 import type { IRebindEventObserverValueType as ValueType } from './rebind-event-observer.i'
 
-const RebindEventObserver: IRebindEventObserverConstructor =
-  class RebindEventObserver
-    implements IRebindEventObserver
+class RebindEventObserver
+  implements IRebindEventObserver
+{
+  _handler: HandlerType
+
+  public constructor(handler: HandlerType)
   {
-    _handler: HandlerType
+    this._handler = handler
 
-    public constructor(handler: HandlerType)
-    {
-      this._handler = handler
-
-      Object.defineProperties(this, {
-        _handler: { enumerable: false }
-      })
-    }
-
-    public update(value: ValueType)
-    {
-      this._handler(value)
-    }
+    Object.defineProperties(this, {
+      _handler: { enumerable: false }
+    })
   }
+
+  public update(value: ValueType)
+  {
+    this._handler(value)
+  }
+}
 
 Object.defineProperties(RebindEventObserver.prototype, {
   constructor: { enumerable: true },
@@ -46,4 +45,4 @@ Object.defineProperties(RebindEventObserver.prototype, {
   update: { enumerable: true }
 })
 
-export default RebindEventObserver
+export default (RebindEventObserver as IRebindEventObserverConstructor)

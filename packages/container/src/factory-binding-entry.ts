@@ -19,29 +19,28 @@ import type { IFactoryBindingEntryFactoryType as FactoryType } from './factory-b
 import type IFactoryBindingEntry from './factory-binding-entry.i'
 import type IFactoryBindingEntryConstructor from './factory-binding-entry-constructor.i'
 
-const FactoryBindingEntry: IFactoryBindingEntryConstructor =
-  class FactoryBindingEntry<FactoryTypeT>
-    extends BindingEntry
-    implements IFactoryBindingEntry<FactoryTypeT>
+class FactoryBindingEntry<FactoryTypeT>
+  extends BindingEntry
+  implements IFactoryBindingEntry<FactoryTypeT>
+{
+  private _factory: FactoryType<FactoryTypeT>
+
+  public constructor(factory: FactoryType<FactoryTypeT>)
   {
-    private _factory: FactoryType<FactoryTypeT>
+    super(false)
 
-    public constructor(factory: FactoryType<FactoryTypeT>)
-    {
-      super(false)
+    this._factory = factory
 
-      this._factory = factory
-
-      Object.defineProperties(this, {
-        _factory: { enumerable: false }
-      })
-    }
-
-    public getFactory()
-    {
-      return this._factory
-    }
+    Object.defineProperties(this, {
+      _factory: { enumerable: false }
+    })
   }
+
+  public getFactory()
+  {
+    return this._factory
+  }
+}
 
 Object.defineProperties(FactoryBindingEntry.prototype, {
   constructor: { enumerable: true },
@@ -49,4 +48,4 @@ Object.defineProperties(FactoryBindingEntry.prototype, {
   getFactory: { enumerable: true }
 })
 
-export default FactoryBindingEntry
+export default (FactoryBindingEntry as IFactoryBindingEntryConstructor)

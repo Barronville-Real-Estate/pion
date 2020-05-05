@@ -22,96 +22,95 @@ import type IClassMappingManager from './class-mapping-manager.i'
 import type IClassMappingManagerConstructor from './class-mapping-manager-constructor.i'
 import type { IConstructorParameterNamesParser } from '@pion/utilities'
 
-const ClassMappingManager: IClassMappingManagerConstructor =
-  class ClassMappingManager
-    implements IClassMappingManager
+class ClassMappingManager
+  implements IClassMappingManager
+{
+  private _parameterNamesParsers: Map<ClassType<any>, IConstructorParameterNamesParser>
+  private _parameterSymbols: Map<ClassType<any>, ConstructorParameterSymbolsType>
+  private _symbols: Map<ClassType<any>, symbol>
+
+  public constructor()
   {
-    private _parameterNamesParsers: Map<ClassType<any>, IConstructorParameterNamesParser>
-    private _parameterSymbols: Map<ClassType<any>, ConstructorParameterSymbolsType>
-    private _symbols: Map<ClassType<any>, symbol>
+    this._parameterNamesParsers = new Map()
+    this._parameterSymbols = new Map()
+    this._symbols = new Map()
 
-    public constructor()
-    {
-      this._parameterNamesParsers = new Map()
-      this._parameterSymbols = new Map()
-      this._symbols = new Map()
+    Object.defineProperties(this, {
+      _parameterNamesParsers: { enumerable: false },
+      _parameterSymbols: { enumerable: false },
+      _symbols: { enumerable: false }
+    })
+  }
 
-      Object.defineProperties(this, {
-        _parameterNamesParsers: { enumerable: false },
-        _parameterSymbols: { enumerable: false },
-        _symbols: { enumerable: false }
-      })
+  public clear()
+  {
+    this._parameterNamesParsers.clear()
+    this._parameterSymbols.clear()
+    this._symbols.clear()
+  }
+
+  public contains<ClassTypeT extends ClassSuperType>(class_: ClassType<ClassTypeT>)
+  {
+    return this._symbols.has(class_)
+  }
+
+  public get<ClassTypeT extends ClassSuperType>(class_: ClassType<ClassTypeT>)
+  {
+    const symbol = this._symbols.get(class_)
+    if (typeof symbol === 'undefined') {
+      return null
     }
-
-    public clear()
-    {
-      this._parameterNamesParsers.clear()
-      this._parameterSymbols.clear()
-      this._symbols.clear()
-    }
-
-    public contains<ClassTypeT extends ClassSuperType>(class_: ClassType<ClassTypeT>)
-    {
-      return this._symbols.has(class_)
-    }
-
-    public get<ClassTypeT extends ClassSuperType>(class_: ClassType<ClassTypeT>)
-    {
-      const symbol = this._symbols.get(class_)
-      if (typeof symbol === 'undefined') {
-        return null
-      }
-      const parameterNamesParser = this._parameterNamesParsers.get(class_)!
-      const parameterNames = parameterNamesParser.parse()
-      const parameterSymbols = this._parameterSymbols.get(class_)!
-      return {
-        parameterNames,
-        parameterSymbols,
-        symbol
-      }
-    }
-
-    public getParameterNames<ClassTypeT extends ClassSuperType>(class_: ClassType<ClassTypeT>)
-    {
-      const value = this.get(class_)
-      return (value !== null) ?
-        value.parameterNames :
-        null
-    }
-
-    public getParameterSymbols<ClassTypeT extends ClassSuperType>(class_: ClassType<ClassTypeT>)
-    {
-      const value = this.get(class_)
-      return (value !== null) ?
-        value.parameterSymbols :
-        null
-    }
-
-    public getSymbol<ClassTypeT extends ClassSuperType>(class_: ClassType<ClassTypeT>)
-    {
-      const value = this.get(class_)
-      return (value !== null) ?
-        value.symbol :
-        null
-    }
-
-    public set<ClassTypeT extends ClassSuperType>(class_: ClassType<ClassTypeT>,
-                                                  symbol: symbol,
-                                                  parameterSymbols: ConstructorParameterSymbolsType)
-    {
-      this._symbols.set(class_, symbol)
-      this._parameterSymbols.set(class_, parameterSymbols)
-      const parameterNamesParser = new ConstructorParameterNamesParser(class_)
-      this._parameterNamesParsers.set(class_, parameterNamesParser)
-    }
-
-    public unset<ClassTypeT extends ClassSuperType>(class_: ClassType<ClassTypeT>)
-    {
-      this._parameterNamesParsers.delete(class_)
-      this._parameterSymbols.delete(class_)
-      this._symbols.delete(class_)
+    const parameterNamesParser = this._parameterNamesParsers.get(class_)!
+    const parameterNames = parameterNamesParser.parse()
+    const parameterSymbols = this._parameterSymbols.get(class_)!
+    return {
+      parameterNames,
+      parameterSymbols,
+      symbol
     }
   }
+
+  public getParameterNames<ClassTypeT extends ClassSuperType>(class_: ClassType<ClassTypeT>)
+  {
+    const value = this.get(class_)
+    return (value !== null) ?
+      value.parameterNames :
+      null
+  }
+
+  public getParameterSymbols<ClassTypeT extends ClassSuperType>(class_: ClassType<ClassTypeT>)
+  {
+    const value = this.get(class_)
+    return (value !== null) ?
+      value.parameterSymbols :
+      null
+  }
+
+  public getSymbol<ClassTypeT extends ClassSuperType>(class_: ClassType<ClassTypeT>)
+  {
+    const value = this.get(class_)
+    return (value !== null) ?
+      value.symbol :
+      null
+  }
+
+  public set<ClassTypeT extends ClassSuperType>(class_: ClassType<ClassTypeT>,
+                                                symbol: symbol,
+                                                parameterSymbols: ConstructorParameterSymbolsType)
+  {
+    this._symbols.set(class_, symbol)
+    this._parameterSymbols.set(class_, parameterSymbols)
+    const parameterNamesParser = new ConstructorParameterNamesParser(class_)
+    this._parameterNamesParsers.set(class_, parameterNamesParser)
+  }
+
+  public unset<ClassTypeT extends ClassSuperType>(class_: ClassType<ClassTypeT>)
+  {
+    this._parameterNamesParsers.delete(class_)
+    this._parameterSymbols.delete(class_)
+    this._symbols.delete(class_)
+  }
+}
 
 Object.defineProperties(ClassMappingManager.prototype, {
   constructor: { enumerable: true },
@@ -126,4 +125,4 @@ Object.defineProperties(ClassMappingManager.prototype, {
   unset: { enumerable: true }
 })
 
-export default ClassMappingManager
+export default (ClassMappingManager as IClassMappingManagerConstructor)

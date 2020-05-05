@@ -38,174 +38,174 @@ import Resolver from './resolver'
 import SimpleBindingManager from './simple-binding-manager'
 import ValueBindingManager from './value-binding-manager'
 
+/** @hidden */
 let _getStaticContainerGetInstance: () => IContainer
 
-const Container: IContainerConstructor =
-  class Container
-    implements IContainer
+class Container
+  implements IContainer
+{
+  private _manager: IContainerManager
+
+  public static getInstance()
   {
-    private _manager: IContainerManager
+    return _getStaticContainerGetInstance()
+  }
 
-    public static getInstance()
-    {
-      return _getStaticContainerGetInstance()
-    }
+  public constructor()
+  {
+    const classMappings = new ClassMappingManager()
+    const contextualBindings = new ContextualBindingManager()
+    const extenders = new ExtenderManager()
+    const rebindEvents = new RebindEventSource()
+    const resolvedSymbols = new ResolvedSymbolManager()
+    const simpleBindings = new SimpleBindingManager()
+    const valueBindings = new ValueBindingManager()
+    const resolver = new Resolver(classMappings, contextualBindings, extenders, resolvedSymbols, simpleBindings, valueBindings)
 
-    public constructor()
-    {
-      const classMappings = new ClassMappingManager()
-      const contextualBindings = new ContextualBindingManager()
-      const extenders = new ExtenderManager()
-      const rebindEvents = new RebindEventSource()
-      const resolvedSymbols = new ResolvedSymbolManager()
-      const simpleBindings = new SimpleBindingManager()
-      const valueBindings = new ValueBindingManager()
-      const resolver = new Resolver(classMappings, contextualBindings, extenders, resolvedSymbols, simpleBindings, valueBindings)
+    this._manager = new ContainerManager(classMappings, contextualBindings, extenders, rebindEvents, resolvedSymbols, resolver, simpleBindings, valueBindings)
 
-      this._manager = new ContainerManager(classMappings, contextualBindings, extenders, rebindEvents, resolvedSymbols, resolver, simpleBindings, valueBindings)
+    Object.defineProperties(this, {
+      _manager: { enumerable: false }
+    })
+  }
 
-      Object.defineProperties(this, {
-        _manager: { enumerable: false }
-      })
-    }
+  private _triggerRebindEvent(key: symbol)
+  {
+    this._manager.triggerRebindEvent(key, () => {
+      return this.resolve(key)
+    })
+  }
 
-    private _triggerRebindEvent(key: symbol)
-    {
-      this._manager.triggerRebindEvent(key, () => {
-        return this.resolve(key)
-      })
-    }
-
-    public addRebindEventHandler(key: symbol,
-                                 handler: RebindEventHandlerType)
-    {
-      const observer = new RebindEventObserver((value) => {
-        handler(this, value)
-      })
-      this._manager.addRebindEventObserver(key, observer)
-      if (this.isBound(key)) {
-        this.resolve(key)
-      }
-    }
-
-    public bindClass<ClassTypeT extends ClassSuperType>(key: symbol,
-                                                        class_: ClassType<ClassTypeT>,
-                                                        parameterSymbols?: ConstructorParameterSymbolsType,
-                                                        shouldResolveOnce?: boolean)
-    {
-      if (typeof parameterSymbols === 'undefined') {
-        parameterSymbols = {}
-      }
-      if (typeof shouldResolveOnce === 'undefined') {
-        shouldResolveOnce = false
-      }
-
-      this._manager.addClassMapping(key, class_, parameterSymbols)
-      this._manager.removeValueBinding(key)
-      const entry = new ClassBindingEntry(class_)
-      this._manager.addClassBinding(key, entry, shouldResolveOnce)
-      if (this.hasResolved(key)) {
-        this._triggerRebindEvent(key)
-      }
-    }
-
-    public bindFactory<FactoryTypeT>(key: symbol,
-                                     factory: FactoryType<FactoryTypeT>,
-                                     shouldResolveOnce?: boolean)
-    {
-      if (typeof shouldResolveOnce === 'undefined') {
-        shouldResolveOnce = false
-      }
-
-      this._manager.removeValueBinding(key)
-      const entry = new FactoryBindingEntry((parameters) => {
-        return factory(this, parameters)
-      })
-      this._manager.addFactoryBinding(key, entry, shouldResolveOnce)
-      if (this.hasResolved(key)) {
-        this._triggerRebindEvent(key)
-      }
-    }
-
-    public bindValue(key: symbol,
-                     value: BindingValueType)
-    {
-      const keyBound = this.isBound(key)
-      this._manager.addValueBinding(key, value)
-      if (keyBound) {
-        this._triggerRebindEvent(key)
-      }
-    }
-
-    public contextuallyBindClass<ClassTypeT extends ClassSuperType>(key: symbol,
-                                                                    dependentKey: symbol,
-                                                                    class_: ClassType<ClassTypeT>,
-                                                                    parameterSymbols?: ConstructorParameterSymbolsType)
-    {
-      if (typeof parameterSymbols === 'undefined') {
-        parameterSymbols = {}
-      }
-
-      this._manager.addClassMapping(dependentKey, class_, parameterSymbols)
-      const entry = new ClassBindingEntry(class_)
-      this._manager.addContextualClassBinding(key, dependentKey, entry)
-    }
-
-    public contextuallyBindFactory<FactoryTypeT>(key: symbol,
-                                                 dependentKey: symbol,
-                                                 factory: FactoryType<FactoryTypeT>)
-    {
-      const entry = new FactoryBindingEntry((parameters) => {
-        return factory(this, parameters)
-      })
-      this._manager.addContextualFactoryBinding(key, dependentKey, entry)
-    }
-
-    public empty()
-    {
-      this._manager.clearAll()
-    }
-
-    public extend(key: symbol,
-                  extender: ExtenderFunctionType)
-    {
-      if (this._manager.containsValueBinding(key)) {
-        let value = this._manager.getValueBinding(key) as BindingValueType
-        value = extender(value, this)
-        this._manager.addValueBinding(key, value)
-        this._triggerRebindEvent(key)
-      } else {
-        this._manager.addExtender(key, (value) => {
-          return extender(value, this)
-        })
-        if (this.hasResolved(key)) {
-          this._triggerRebindEvent(key)
-        }
-      }
-    }
-
-    public hasResolved(key: symbol)
-    {
-      return (this._manager.containsResolvedSymbol(key) ||
-              this._manager.containsValueBinding(key))
-    }
-
-    public isBound(key: symbol)
-    {
-      return (this._manager.containsSimpleBinding(key) ||
-              this._manager.containsValueBinding(key))
-    }
-
-    public resolve<ResolveValueTypeT = undefined>(key: symbol,
-                                                  parameters?: ResolveParametersType)
-    {
-      if (typeof parameters === 'undefined') {
-        parameters = {}
-      }
-
-      return this._manager.resolveValue<ResolveValueTypeT>(key, parameters)
+  public addRebindEventHandler(key: symbol,
+                               handler: RebindEventHandlerType)
+  {
+    const observer = new RebindEventObserver((value) => {
+      handler(this, value)
+    })
+    this._manager.addRebindEventObserver(key, observer)
+    if (this.isBound(key)) {
+      this.resolve(key)
     }
   }
+
+  public bindClass<ClassTypeT extends ClassSuperType>(key: symbol,
+                                                      class_: ClassType<ClassTypeT>,
+                                                      parameterSymbols?: ConstructorParameterSymbolsType,
+                                                      shouldResolveOnce?: boolean)
+  {
+    if (typeof parameterSymbols === 'undefined') {
+      parameterSymbols = {}
+    }
+    if (typeof shouldResolveOnce === 'undefined') {
+      shouldResolveOnce = false
+    }
+
+    this._manager.addClassMapping(key, class_, parameterSymbols)
+    this._manager.removeValueBinding(key)
+    const entry = new ClassBindingEntry(class_)
+    this._manager.addClassBinding(key, entry, shouldResolveOnce)
+    if (this.hasResolved(key)) {
+      this._triggerRebindEvent(key)
+    }
+  }
+
+  public bindFactory<FactoryTypeT>(key: symbol,
+                                   factory: FactoryType<FactoryTypeT>,
+                                   shouldResolveOnce?: boolean)
+  {
+    if (typeof shouldResolveOnce === 'undefined') {
+      shouldResolveOnce = false
+    }
+
+    this._manager.removeValueBinding(key)
+    const entry = new FactoryBindingEntry((parameters) => {
+      return factory(this, parameters)
+    })
+    this._manager.addFactoryBinding(key, entry, shouldResolveOnce)
+    if (this.hasResolved(key)) {
+      this._triggerRebindEvent(key)
+    }
+  }
+
+  public bindValue(key: symbol,
+                   value: BindingValueType)
+  {
+    const keyBound = this.isBound(key)
+    this._manager.addValueBinding(key, value)
+    if (keyBound) {
+      this._triggerRebindEvent(key)
+    }
+  }
+
+  public contextuallyBindClass<ClassTypeT extends ClassSuperType>(key: symbol,
+                                                                  dependentKey: symbol,
+                                                                  class_: ClassType<ClassTypeT>,
+                                                                  parameterSymbols?: ConstructorParameterSymbolsType)
+  {
+    if (typeof parameterSymbols === 'undefined') {
+      parameterSymbols = {}
+    }
+
+    this._manager.addClassMapping(dependentKey, class_, parameterSymbols)
+    const entry = new ClassBindingEntry(class_)
+    this._manager.addContextualClassBinding(key, dependentKey, entry)
+  }
+
+  public contextuallyBindFactory<FactoryTypeT>(key: symbol,
+                                               dependentKey: symbol,
+                                               factory: FactoryType<FactoryTypeT>)
+  {
+    const entry = new FactoryBindingEntry((parameters) => {
+      return factory(this, parameters)
+    })
+    this._manager.addContextualFactoryBinding(key, dependentKey, entry)
+  }
+
+  public empty()
+  {
+    this._manager.clearAll()
+  }
+
+  public extend(key: symbol,
+                extender: ExtenderFunctionType)
+  {
+    if (this._manager.containsValueBinding(key)) {
+      let value = this._manager.getValueBinding(key) as BindingValueType
+      value = extender(value, this)
+      this._manager.addValueBinding(key, value)
+      this._triggerRebindEvent(key)
+    } else {
+      this._manager.addExtender(key, (value) => {
+        return extender(value, this)
+      })
+      if (this.hasResolved(key)) {
+        this._triggerRebindEvent(key)
+      }
+    }
+  }
+
+  public hasResolved(key: symbol)
+  {
+    return (this._manager.containsResolvedSymbol(key) ||
+            this._manager.containsValueBinding(key))
+  }
+
+  public isBound(key: symbol)
+  {
+    return (this._manager.containsSimpleBinding(key) ||
+            this._manager.containsValueBinding(key))
+  }
+
+  public resolve<ResolveValueTypeT = undefined>(key: symbol,
+                                                parameters?: ResolveParametersType)
+  {
+    if (typeof parameters === 'undefined') {
+      parameters = {}
+    }
+
+    return this._manager.resolveValue<ResolveValueTypeT>(key, parameters)
+  }
+}
 
 _getStaticContainerGetInstance = ((Container) => {
   const value = new Container()
@@ -232,4 +232,4 @@ Object.defineProperties(Container.prototype, {
   resolve: { enumerable: true }
 })
 
-export default Container
+export default (Container as IContainerConstructor)

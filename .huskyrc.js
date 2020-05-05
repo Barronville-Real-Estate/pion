@@ -14,39 +14,10 @@
 // * limitations under the License.                                            *
 // *****************************************************************************
 
-import BindingEntry from './binding-entry'
-import type { IClassBindingEntryClassSuperType as ClassSuperType } from './class-binding-entry.i'
-import type { IClassBindingEntryClassType as ClassType } from './class-binding-entry.i'
-import type IClassBindingEntry from './class-binding-entry.i'
-import type IClassBindingEntryConstructor from './class-binding-entry-constructor.i'
+'use strict'
 
-class ClassBindingEntry<ClassTypeT extends ClassSuperType>
-  extends BindingEntry
-  implements IClassBindingEntry<ClassTypeT>
-{
-  private _class: ClassType<ClassTypeT>
-
-  public constructor(class_: ClassType<ClassTypeT>)
-  {
-    super(true)
-
-    this._class = class_
-
-    Object.defineProperties(this, {
-      _class: { enumerable: false }
-    })
-  }
-
-  public getClass()
-  {
-    return this._class
-  }
+const configuration = {
+  hooks: { 'pre-commit': 'npm run git-pre-commit-hook' }
 }
 
-Object.defineProperties(ClassBindingEntry.prototype, {
-  constructor: { enumerable: true },
-
-  getClass: { enumerable: true }
-})
-
-export default (ClassBindingEntry as IClassBindingEntryConstructor)
+exports = module.exports = configuration

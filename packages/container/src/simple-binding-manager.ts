@@ -18,65 +18,64 @@ import type IBindingEntry from './binding-entry.i'
 import type ISimpleBindingManager from './simple-binding-manager.i'
 import type ISimpleBindingManagerConstructor from './simple-binding-manager-constructor.i'
 
-const SimpleBindingManager: ISimpleBindingManagerConstructor =
-  class SimpleBindingManager
-    implements ISimpleBindingManager
+class SimpleBindingManager
+  implements ISimpleBindingManager
+{
+  private _bindings: Map<symbol, IBindingEntry>
+  private _shouldResolveOnceFlags: Map<symbol, boolean>
+
+  public constructor()
   {
-    private _bindings: Map<symbol, IBindingEntry>
-    private _shouldResolveOnceFlags: Map<symbol, boolean>
+    this._bindings = new Map()
+    this._shouldResolveOnceFlags = new Map()
 
-    public constructor()
-    {
-      this._bindings = new Map()
-      this._shouldResolveOnceFlags = new Map()
-
-      Object.defineProperties(this, {
-        _bindings: { enumerable: false },
-        _shouldResolveOnceFlags: { enumerable: false }
-      })
-    }
-
-    public clear()
-    {
-      this._shouldResolveOnceFlags.clear()
-      this._bindings.clear()
-    }
-
-    public contains(key: symbol)
-    {
-      return this._bindings.has(key)
-    }
-
-    public get(key: symbol)
-    {
-      const entry = this._bindings.get(key)
-      return (typeof entry !== 'undefined') ?
-        entry :
-        null
-    }
-
-    public set(key: symbol,
-               entry: IBindingEntry,
-               shouldResolveOnce: boolean)
-    {
-      this._bindings.set(key, entry)
-      this._shouldResolveOnceFlags.set(key, shouldResolveOnce)
-    }
-
-    public shouldResolveOnce(key: symbol)
-    {
-      const value = this._shouldResolveOnceFlags.get(key)
-      return (typeof value !== 'undefined') ?
-        value :
-        null
-    }
-
-    public unset(key: symbol)
-    {
-      this._shouldResolveOnceFlags.delete(key)
-      this._bindings.delete(key)
-    }
+    Object.defineProperties(this, {
+      _bindings: { enumerable: false },
+      _shouldResolveOnceFlags: { enumerable: false }
+    })
   }
+
+  public clear()
+  {
+    this._shouldResolveOnceFlags.clear()
+    this._bindings.clear()
+  }
+
+  public contains(key: symbol)
+  {
+    return this._bindings.has(key)
+  }
+
+  public get(key: symbol)
+  {
+    const entry = this._bindings.get(key)
+    return (typeof entry !== 'undefined') ?
+      entry :
+      null
+  }
+
+  public set(key: symbol,
+             entry: IBindingEntry,
+             shouldResolveOnce: boolean)
+  {
+    this._bindings.set(key, entry)
+    this._shouldResolveOnceFlags.set(key, shouldResolveOnce)
+  }
+
+  public shouldResolveOnce(key: symbol)
+  {
+    const value = this._shouldResolveOnceFlags.get(key)
+    return (typeof value !== 'undefined') ?
+      value :
+      null
+  }
+
+  public unset(key: symbol)
+  {
+    this._shouldResolveOnceFlags.delete(key)
+    this._bindings.delete(key)
+  }
+}
 
 Object.defineProperties(SimpleBindingManager.prototype, {
   constructor: { enumerable: true },
@@ -89,4 +88,4 @@ Object.defineProperties(SimpleBindingManager.prototype, {
   unset: { enumerable: true }
 })
 
-export default SimpleBindingManager
+export default (SimpleBindingManager as ISimpleBindingManagerConstructor)
