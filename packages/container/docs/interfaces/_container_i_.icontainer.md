@@ -1,4 +1,4 @@
-[@pion/container](../README.md) › ["container.i"](../modules/_container_i_.md) › [IContainer](_container_i_.icontainer.md)
+[@pion-toolkit/container](../README.md) › ["container.i"](../modules/_container_i_.md) › [IContainer](_container_i_.icontainer.md)
 
 # Interface: IContainer
 
