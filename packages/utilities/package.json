@@ -27,6 +27,8 @@
   },
   "scripts": {
     "generate-documentation": "npx typedoc --tsconfig ./tsconfig.build.json",
+    "git-stage-documentation": "git add ./docs",
+    "prepack": "npm run transpile",
     "transpile": "npx --package typescript tsc --project ./tsconfig.build.json",
     "transpile:watch": "npm run transpile -- --watch"
   },
