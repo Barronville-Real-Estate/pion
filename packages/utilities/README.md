@@ -1,11 +1,11 @@
-# Package: `@pion/utilities`
+# Package: `@pion-toolkit/utilities`
 
 ## Installation
 
-To install __`@pion/utilities`__, run:
+To install __`@pion-toolkit/utilities`__, run:
 
 ```sh
-npm i --save '@pion/utilities'
+npm i --save '@pion-toolkit/utilities'
 ```
 
 ### API

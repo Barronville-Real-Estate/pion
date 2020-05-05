@@ -1,6 +1,6 @@
-[@pion/utilities](README.md)
+[@pion-toolkit/utilities](README.md)
 
-# @pion/utilities
+# @pion-toolkit/utilities
 
 ## Index
 

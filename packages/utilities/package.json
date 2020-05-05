@@ -3,7 +3,7 @@
   "dependencies": {
     "esprima": "^4.0.1"
   },
-  "description": "@pion/utilities component of the Pion toolkit.",
+  "description": "@pion-toolkit/utilities component of the Pion toolkit.",
   "devDependencies": {
     "@types/esprima": "^4.0.2",
     "@types/estree": "0.0.44",
@@ -21,7 +21,7 @@
     "utils"
   ],
   "main": "./lib/index.js",
-  "name": "@pion/utilities",
+  "name": "@pion-toolkit/utilities",
   "publishConfig": {
     "access": "public"
   },

@@ -16,11 +16,11 @@
 
 import type { IClassMappingManagerClassSuperType as ClassSuperType } from './class-mapping-manager.i'
 import type { IClassMappingManagerClassType as ClassType } from './class-mapping-manager.i'
-import { ConstructorParameterNamesParser } from '@pion/utilities'
+import { ConstructorParameterNamesParser } from '@pion-toolkit/utilities'
 import type { IClassMappingManagerConstructorParameterSymbolsType as ConstructorParameterSymbolsType } from './class-mapping-manager.i'
 import type IClassMappingManager from './class-mapping-manager.i'
 import type IClassMappingManagerConstructor from './class-mapping-manager-constructor.i'
-import type { IConstructorParameterNamesParser } from '@pion/utilities'
+import type { IConstructorParameterNamesParser } from '@pion-toolkit/utilities'
 
 class ClassMappingManager
   implements IClassMappingManager

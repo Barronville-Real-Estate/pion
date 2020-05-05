@@ -4,8 +4,8 @@
 
 ## Packages
 
-- __[`@pion/container`](packages/container/README.md):__ An easy-to-use __IoC__ (*inversion of control*) container.
-- __[`@pion/utilities`](packages/utilities/README.md)__
+- __[`@pion-toolkit/container`](packages/container/README.md):__ An easy-to-use __IoC__ (*inversion of control*) container.
+- __[`@pion-toolkit/utilities`](packages/utilities/README.md)__
 
 ## Author
 
